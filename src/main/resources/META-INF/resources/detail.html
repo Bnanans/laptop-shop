@@ -199,7 +199,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
 
-        fetch(`/laptops/${id}`)
+        fetch(`/api/laptops/${id}`)
             .then(res => res.json())
             .then(laptop => {
                 const isOutOfStock = laptop.quantity <= 0;

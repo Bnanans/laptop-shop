@@ -253,7 +253,7 @@
         let cartItems = [];
         const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
 
-        fetch('/laptops').then(res => res.json()).then(data => {
+        fetch('/api/laptops').then(res => res.json()).then(data => {
             const tbody = document.getElementById('cart-body');
             if (cart.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Giỏ hàng trống</td></tr>'; return; }
 

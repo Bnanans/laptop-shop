@@ -1,4 +1,4 @@
-const API_URL = '/laptops';
+const API_URL = '/api/laptops';
 
 document.addEventListener("DOMContentLoaded", () => {
     if (document.getElementById('product-grid')) {
@@ -93,7 +93,7 @@ async function addToCart(id) {
     }
 
     try {
-        const res = await fetch(`/laptops/${id}`);
+        const res = await fetch(`${API_URL}/${id}`);
         if (!res.ok) throw new Error("Product not found");
         const laptop = await res.json();
 
