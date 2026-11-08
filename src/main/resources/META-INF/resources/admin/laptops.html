@@ -1,26 +1,13 @@
 <!doctype html>
-<html>
-
+<html lang="vi">
 <head>
-    <meta charset="utf-8">
-    <title>Manage Laptops</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="0;url=/admin/index.html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đang mở trang quản trị...</title>
 </head>
-
 <body>
-    <div class="container">
-        <h1>Manage Laptops</h1>
-        <div id="list"></div>
-        <button onclick="location.href='/admin/login.html'">Logout</button>
-    </div>
-    <script>
-        async function load() {
-            const res = await fetch('/api/laptops');
-            const data = await res.json();
-            document.getElementById('list').innerText = JSON.stringify(data, null, 2);
-        }
-        load();
-    </script>
+    <p>Đang chuyển đến trang quản trị... <a href="/admin/index.html">Nhấn vào đây nếu trang không tự chuyển.</a></p>
+    <script>window.location.replace('/admin/index.html');</script>
 </body>
-
 </html>

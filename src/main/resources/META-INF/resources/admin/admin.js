@@ -1,4 +1,4 @@
-const API_URL = '/laptops';
+const API_URL = '/api/laptops';
 
 document.addEventListener("DOMContentLoaded", () => {
     if (document.getElementById('laptop-list-body')) {

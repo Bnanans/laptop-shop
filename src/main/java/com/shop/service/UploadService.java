@@ -1,15 +1,16 @@
 package com.shop.service;
 
+import java.io.InputStream;
+import java.util.Map;
+import java.util.UUID;
+
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-
-import java.io.InputStream;
-import java.util.Map;
-import java.util.UUID;
 
 @ApplicationScoped
 public class UploadService {
