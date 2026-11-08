@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Khách hàng</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        .sidebar {
+            width: 260px;
+            background-color: #343a40;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            background: #212529;
+            border-bottom: 1px solid #4b545c;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            flex: 1;
+            padding-top: 20px;
+            padding-left: 0;
+        }
+
+        .sidebar-menu li {
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .sidebar-menu li:hover,
+        .sidebar-menu li.active {
+            background-color: #495057;
+            border-left: 4px solid #007bff;
+        }
+
+        .sidebar-menu li a {
+            color: #fff;
+            text-decoration: none;
+            display: block;
+            font-size: 16px;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .navbar {
+            background: #fff;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .content-wrapper {
+            padding: 30px;
+            flex: 1;
+        }
+
+        .table-container {
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #495057;
+        }
+
+        button {
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
+        .btn-edit {
+            background: #007bff;
+            margin-right: 5px;
+        }
+
+        .btn-edit:hover {
+            background: #0056b3;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .form-group input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn-save {
+            background: #28a745;
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+
+        .btn-save:hover {
+            background: #218838;
+        }
+
+        .btn-cancel {
+            background: #6c757d;
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+
+        .btn-cancel:hover {
+            background: #5a6268;
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">Admin Panel</div>
+        <ul class="sidebar-menu">
+            <li><a href="index.html">📦 Quản lý Laptop</a></li>
+            <li><a href="orders.html">🛒 Quản lý Đơn hàng</a></li>
+            <li class="active"><a href="customers.html">👥 Quản lý Khách hàng</a></li>
+            <li><a href="/">🌐 Quay lại Store</a></li>
+        </ul>
+    </aside>
+    <div class="main-content">
+        <header class="navbar">
+            <h2>Quản lý Khách hàng</h2>
+            <div class="user-profile"><a href="/login.html"
+                    style="color:#dc3545;font-weight:bold;text-decoration:none;">Đăng xuất</a></div>
+        </header>
+        <div class="content-wrapper">
+            <div class="table-container">
+                <h3>Danh sách Khách hàng</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mã KH</th>
+                            <th>Tên Khách hàng</th>
+                            <th>Email</th>
+                            <th>SĐT</th>
+                            <th>Địa chỉ</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customer-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Modal Edit Customer -->
+        <div id="editModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Sửa Thông Tin Khách Hàng</div>
+                <form id="editForm">
+                    <div class="form-group">
+                        <label for="editFullName">Tên Khách Hàng</label>
+                        <input type="text" id="editFullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">Email</label>
+                        <input type="email" id="editEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPhone">Số Điện Thoại</label>
+                        <input type="text" id="editPhone">
+                    </div>
+                    <div class="form-group">
+                        <label for="editAddress">Địa Chỉ</label>
+                        <input type="text" id="editAddress">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-cancel" onclick="closeEditModal()">Hủy</button>
+                        <button type="submit" class="btn-save">Lưu Thay Đổi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentEditingCustomerId = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadCustomers();
+            document.getElementById('editForm').addEventListener('submit', saveCustomer);
+        });
+
+        function loadCustomers() {
+            fetch('/customers')
+                .then(res => res.json())
+                .then(data => {
+                    const tbody = document.getElementById('customer-body');
+                    tbody.innerHTML = '';
+                    data.forEach(c => {
+                        tbody.innerHTML += `
+                            <tr>
+                                <td><strong>#${c.id}</strong></td>
+                                <td>${c.fullName || 'N/A'}</td>
+                                <td>${c.email || ''}</td>
+                                <td>${c.phone || ''}</td>
+                                <td>${c.address || ''}</td>
+                                <td>
+                                    <button class="btn-edit" onclick="openEditModal(${c.id})">Sửa</button>
+                                    <button class="btn-delete" onclick="deleteCustomer(${c.id})">Xóa</button>
+                                </td>
+                            </tr>`;
+                    });
+                })
+                .catch(err => console.error("Lỗi tải dữ liệu:", err));
+        }
+
+        function openEditModal(id) {
+            fetch(`/customers/${id}`)
+                .then(res => res.json())
+                .then(customer => {
+                    currentEditingCustomerId = id;
+                    document.getElementById('editFullName').value = customer.fullName || '';
+                    document.getElementById('editEmail').value = customer.email || '';
+                    document.getElementById('editPhone').value = customer.phone || '';
+                    document.getElementById('editAddress').value = customer.address || '';
+                    document.getElementById('editModal').classList.add('show');
+                })
+                .catch(err => {
+                    alert('Lỗi tải thông tin khách hàng: ' + err.message);
+                    console.error(err);
+                });
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('show');
+            currentEditingCustomerId = null;
+        }
+
+        function saveCustomer(e) {
+            e.preventDefault();
+
+            if (!currentEditingCustomerId) {
+                alert('Lỗi: Không xác định được khách hàng');
+                return;
+            }
+
+            const updatedCustomer = {
+                fullName: document.getElementById('editFullName').value,
+                email: document.getElementById('editEmail').value,
+                phone: document.getElementById('editPhone').value,
+                address: document.getElementById('editAddress').value
+            };
+
+            fetch(`/customers/${currentEditingCustomerId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedCustomer)
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error('Lỗi ' + res.status);
+                    return res.json();
+                })
+                .then(data => {
+                    alert('Cập nhật thông tin khách hàng thành công!');
+                    closeEditModal();
+                    loadCustomers();
+                })
+                .catch(err => {
+                    alert('Lỗi cập nhật: ' + err.message);
+                    console.error(err);
+                });
+        }
+
+        function deleteCustomer(id) {
+            if (confirm('Xóa khách hàng này?')) {
+                fetch(`/customers/${id}`, { method: 'DELETE' })
+                    .then(res => {
+                        if (!res.ok) throw new Error('Lỗi ' + res.status);
+                        loadCustomers();
+                    })
+                    .catch(err => {
+                        alert('Lỗi xóa: ' + err.message);
+                        console.error(err);
+                    });
+            }
+        }
+
+        // Đóng modal khi click ngoài
+        window.onclick = function (event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                closeEditModal();
+            }
+        }
+    </script>
+</body>
+
+</html>

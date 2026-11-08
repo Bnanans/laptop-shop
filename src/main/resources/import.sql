@@ -1,0 +1,2 @@
+-- Chế độ 'update' của Hibernate sẽ tự động lo việc cấu trúc bảng.
+-- Không tạo tài khoản quản trị mặc định trong mã nguồn công khai.

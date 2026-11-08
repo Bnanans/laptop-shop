@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laptop Shop</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f9;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+        }
+
+        h1,
+        h2 {
+            color: #333;
+        }
+
+        .sidebar {
+            width: 260px;
+            background-color: #343a40;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            margin: -20px 20px -20px -20px;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            background: #212529;
+            border-bottom: 1px solid #4b545c;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            flex: 1;
+            padding-top: 20px;
+            padding-left: 0;
+        }
+
+        .sidebar-menu li {
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .sidebar-menu li:hover,
+        .sidebar-menu li.active {
+            background-color: #495057;
+            border-left: 4px solid #007bff;
+        }
+
+        .sidebar-menu li a {
+            color: #fff;
+            text-decoration: none;
+            display: block;
+            font-size: 16px;
+        }
+
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-add {
+            padding: 10px 15px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        button {
+            padding: 8px 12px;
+            cursor: pointer;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">Admin Panel</div>
+        <ul class="sidebar-menu">
+            <li class="active"><a href="index.html">📦 Quản lý Laptop</a></li>
+            <li><a href="orders.html">🛒 Quản lý Đơn hàng</a></li>
+            <li><a href="customers.html">👥 Quản lý Khách hàng</a></li>
+            <li><a href="/">🌐 Quay lại Store</a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <h1>Trang Quản Trị Hệ Thống Laptop</h1>
+
+        <div class="header-actions">
+            <h2>Danh sách Laptop hiện có</h2>
+            <a href="add.html" class="btn-add">+ Thêm sản phẩm mới</a>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Ảnh</th>
+                    <th>Tên</th>
+                    <th>Hãng</th>
+                    <th>Giá</th>
+                    <th>SL</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="laptop-list-body"></tbody>
+        </table>
+    </div>
+
+    <script src="admin.js"></script>
+
+</body>
+
+</html>

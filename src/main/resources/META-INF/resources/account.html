@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông tin tài khoản - LaptopStore</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px 20px;
+        }
+
+        .account-card {
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .account-card h2 {
+            margin-bottom: 25px;
+            text-align: center;
+            color: #007bff;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .info-group {
+            margin-bottom: 20px;
+        }
+
+        .info-group label {
+            display: block;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .info-group input,
+        .info-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+            background-color: #f8f9fa;
+        }
+
+        .info-group input:focus,
+        .info-group textarea:focus {
+            border-color: #80bdff;
+            background-color: #fff;
+        }
+
+        .btn-save {
+            width: 100%;
+            padding: 12px;
+            background: #28a745;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-save:hover {
+            background: #218838;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            color: #343a40;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="account-card">
+        <h2>Thông Tin Tài Khoản</h2>
+        <div id="msg"
+            style="color: #28a745; text-align: center; margin-bottom: 15px; font-weight: bold; display: none;">Lưu thành
+            công!</div>
+        <form id="accountForm">
+            <div class="info-group">
+                <label>Họ và tên</label>
+                <input type="text" id="a_name" required>
+            </div>
+            <div class="info-group">
+                <label>Số điện thoại</label>
+                <input type="text" id="a_phone" required>
+            </div>
+            <div class="info-group">
+                <label>Email</label>
+                <input type="email" id="a_email" required readonly
+                    style="background-color: #e9ecef; cursor: not-allowed;" title="Email không thể thay đổi">
+            </div>
+            <div class="info-group">
+                <label>Địa chỉ nhận hàng</label>
+                <textarea id="a_address" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn-save">💾 Lưu thay đổi</button>
+        </form>
+        <a href="/" class="back-link">&larr; Quay lại trang chủ</a>
+    </div>
+
+    <script>
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (!user) {
+            window.location.href = "/login.html";
+        } else {
+            document.getElementById('a_name').value = user.name || '';
+            document.getElementById('a_phone').value = user.phone || '';
+            document.getElementById('a_email').value = user.email || '';
+            document.getElementById('a_address').value = user.address || '';
+        }
+
+        document.getElementById('accountForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            user.name = document.getElementById('a_name').value;
+            user.phone = document.getElementById('a_phone').value;
+            user.address = document.getElementById('a_address').value;
+            localStorage.setItem('currentUser', JSON.stringify(user));
+
+            const msg = document.getElementById('msg');
+            msg.style.display = 'block';
+            setTimeout(() => { msg.style.display = 'none'; }, 3000);
+        });
+    </script>
+</body>
+
+</html>

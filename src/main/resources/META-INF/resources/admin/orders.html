@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Đơn hàng</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        .sidebar {
+            width: 260px;
+            background-color: #343a40;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            background: #212529;
+            border-bottom: 1px solid #4b545c;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            flex: 1;
+            padding-top: 20px;
+            padding-left: 0;
+        }
+
+        .sidebar-menu li {
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .sidebar-menu li:hover,
+        .sidebar-menu li.active {
+            background-color: #495057;
+            border-left: 4px solid #007bff;
+        }
+
+        .sidebar-menu li a {
+            color: #fff;
+            text-decoration: none;
+            display: block;
+            font-size: 16px;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .navbar {
+            background: #fff;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .content-wrapper {
+            padding: 30px;
+            flex: 1;
+        }
+
+        .table-container {
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #495057;
+        }
+
+        button {
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .status-done {
+            background: #28a745;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">Admin Panel</div>
+        <ul class="sidebar-menu">
+            <li><a href="index.html">📦 Quản lý Laptop</a></li>
+            <li class="active"><a href="orders.html">🛒 Quản lý Đơn hàng</a></li>
+            <li><a href="customers.html">👥 Quản lý Khách hàng</a></li>
+            <li><a href="/">🌐 Quay lại Store</a></li>
+        </ul>
+    </aside>
+    <div class="main-content">
+        <header class="navbar">
+            <h2>Quản lý Đơn hàng</h2>
+            <div class="user-profile"><a href="/login.html"
+                    style="color:#dc3545;font-weight:bold;text-decoration:none;">Đăng xuất</a></div>
+        </header>
+        <div class="content-wrapper">
+            <div class="table-container">
+                <h3>Danh sách Đơn hàng</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mã ĐH</th>
+                            <th>Ngày đặt</th>
+                            <th>Khách hàng</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="order-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", loadOrders);
+
+        function loadOrders() {
+            fetch('/orders')
+                .then(res => res.json())
+                .then(data => {
+                    const tbody = document.getElementById('order-body');
+                    tbody.innerHTML = '';
+                    data.forEach(o => {
+                        const isDone = o.status === 'Hoàn tất';
+                        tbody.innerHTML += `
+                            <tr style="${isDone ? 'background-color: #f1fcf5;' : ''}">
+                                <td><strong>#${o.id}</strong></td>
+                                <td>${new Date(o.orderDate).toLocaleString()}</td>
+                                <td>${o.customer ? o.customer.fullName + '<br><small>' + o.customer.phone + '</small>' : 'N/A'}</td>
+                                <td style="color:#dc3545;font-weight:bold;">$${o.totalAmount}</td>
+                                <td><span class="status-badge ${isDone ? 'status-done' : 'status-pending'}">${o.status}</span></td>
+                                <td>
+                                    ${!isDone ? `<button class="btn-success" onclick="updateStatus(${o.id})">Hoàn tất</button>` : '✔️'}
+                                    <button class="btn-delete" onclick="deleteOrder(${o.id})">Xóa</button>
+                                </td>
+                            </tr>`;
+                    });
+                });
+        }
+
+        function updateStatus(id) {
+            if (confirm('Xác nhận hoàn tất đơn hàng?')) fetch(`/orders/${id}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify("Hoàn tất") }).then(loadOrders);
+        }
+        function deleteOrder(id) {
+            if (confirm('Chắc chắn xóa?')) {
+                fetch(`/orders/${id}`, { method: 'DELETE' })
+                    .then(res => {
+                        if (!res.ok) throw new Error('Lỗi ' + res.status);
+                        return res;
+                    })
+                    .then(() => loadOrders())
+                    .catch(err => {
+                        alert('Lỗi xóa: ' + err.message);
+                        console.error(err);
+                    });
+            }
+        }
+    </script>
+</body>
+
+</html>

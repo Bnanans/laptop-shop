@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết sản phẩm</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #fff;
+            padding: 15px 5%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .container {
+            padding: 40px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex: 1;
+            width: 100%;
+        }
+
+        #product-detail {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .detail-wrapper {
+            display: flex;
+            gap: 40px;
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .detail-image {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .detail-image img {
+            max-width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+        }
+
+        .detail-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .detail-info h1 {
+            font-size: 32px;
+            color: #212529;
+            margin-bottom: 15px;
+        }
+
+        .detail-info .brand {
+            font-size: 18px;
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+
+        .detail-info .price {
+            font-size: 28px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-bottom: 30px;
+        }
+
+        .detail-info .desc {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            white-space: pre-wrap;
+        }
+
+        .detail-description {
+            background: #fff;
+            padding: 25px 40px;
+            margin-top: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            display: block;
+        }
+
+        .detail-description h3 {
+            margin-bottom: 15px;
+            font-size: 22px;
+            color: #212529;
+        }
+
+        .btn-add {
+            padding: 15px;
+            background: #ff9800;
+            color: white;
+            border: none;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+        }
+
+        .btn-add:hover {
+            background: #e68a00;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* Footer */
+        footer {
+            background: #343a40;
+            color: #ced4da;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 0;
+        }
+
+        footer h3 {
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        footer p {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="/" class="logo">LaptopStore</a>
+        <a href="/cart.html" style="text-decoration: none; color: #333; font-weight: bold;">🛒 Giỏ hàng <span
+                id="cart-badge" style="background:#e74c3c;color:white;border-radius:50%;padding:2px 6px;">0</span></a>
+    </header>
+
+    <div class="container">
+        <a href="/" class="back-link">&larr; Quay lại cửa hàng</a>
+        <div class="detail-wrapper" id="product-detail">
+            <h2>Đang tải dữ liệu...</h2>
+        </div>
+    </div>
+
+    <footer>
+        <h3>LaptopStore - Nâng tầm trải nghiệm</h3>
+        <p>&copy; 2026 LaptopStore. All rights reserved.</p>
+        <p>Địa chỉ: 123 Đường Công Nghệ, Quận 1, TP.HCM | Hotline: 1800-9999</p>
+    </footer>
+
+    <script src="app.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+
+        fetch(`/laptops/${id}`)
+            .then(res => res.json())
+            .then(laptop => {
+                const isOutOfStock = laptop.quantity <= 0;
+                const description = laptop.description || 'Chưa có mô tả về sản phẩm.';
+                const safeDescription = description
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/\n/g, '<br>');
+                document.getElementById('product-detail').innerHTML = `
+                    <div class="detail-wrapper">
+                        <div class="detail-image">
+                            <img src="${laptop.imageUrl || 'https://via.placeholder.com/400'}" alt="${laptop.name}">
+                        </div>
+                        <div class="detail-info">
+                            <h1>${laptop.name}</h1>
+                            <p class="brand">Hãng sản xuất: <strong>${laptop.brand || 'N/A'}</strong></p>
+                            <p class="price">$${laptop.price}</p>
+                            <p style="font-size: 16px; margin-bottom: 20px; padding: 10px; background: #f1f3f5; border-radius: 6px;">
+                                Trạng thái kho: <strong style="color: ${isOutOfStock ? '#dc3545' : '#28a745'};">${isOutOfStock ? 'Sản phẩm hiện đang hết hàng' : 'Còn hàng (' + laptop.quantity + ' sản phẩm)'}</strong>
+                            </p>
+                            <button class="btn-add" onclick="addToCart(${laptop.id})" ${isOutOfStock ? 'disabled style="background:#ccc; cursor:not-allowed;"' : ''}>Thêm vào giỏ hàng</button>
+                        </div>
+                    </div>
+                    <div class="detail-description">
+                        <h3>Mô tả sản phẩm</h3>
+                        <p class="desc">${safeDescription}</p>
+                    </div>`;
+            });
+    </script>
+</body>
+
+</html>

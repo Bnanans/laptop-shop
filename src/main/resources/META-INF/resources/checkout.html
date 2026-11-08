@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh Toán</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .checkout-card {
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h2 {
+            color: #28a745;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        p {
+            color: #555;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .btn-home {
+            padding: 12px 25px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.3s;
+            display: inline-block;
+        }
+
+        .btn-home:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="checkout-card">
+        <h2>🎉 Đặt hàng thành công!</h2>
+        <p>Cảm ơn bạn đã mua sắm tại <strong>LaptopStore</strong>.<br>Hệ thống đã ghi nhận đơn hàng của bạn và sẽ liên
+            hệ giao hàng trong thời gian sớm nhất.</p>
+        <a href="/" class="btn-home" onclick="clearCart()">Quay lại Trang Chủ</a>
+    </div>
+
+    <script>
+        // Clear những sản phẩm đã chọn mua khỏi giỏ hàng
+        function clearCart() {
+            // (Tuỳ chọn) Hiện tại code ở cart.html đã xoá những sản phẩm thanh toán thành công
+            // và chừa lại những sản phẩm chưa mua. Nên không cần wipe out giỏ hàng hoàn toàn.
+            // Hàm này có thể để trống.
+        }
+
+        // Check auth (chỉ có user đăng nhập mới được vô thanh toán)
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (!user) {
+            alert("Vui lòng đăng nhập để thanh toán!");
+            window.location.href = '/login.html';
+        }
+    </script>
+</body>
+
+</html>

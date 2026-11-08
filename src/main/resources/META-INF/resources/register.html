@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký - Laptop Store</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            padding: 40px 0;
+            min-height: 100vh;
+        }
+
+        .auth-card {
+            background: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .auth-card h2 {
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: #28a745;
+        }
+
+        .pwd-container {
+            position: relative;
+        }
+
+        .pwd-container input {
+            padding-right: 40px;
+        }
+
+        .pwd-toggle {
+            position: absolute;
+            right: 10px;
+            top: 12px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: #666;
+        }
+
+        .address-group select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background: #218838;
+        }
+
+        .auth-links {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .auth-links a {
+            color: #28a745;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
+
+        .back-home {
+            display: block;
+            margin-top: 25px;
+            color: #6c757d;
+            text-decoration: none;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-card">
+        <h2>Đăng ký tài khoản</h2>
+        <form id="regForm">
+            <div class="form-group">
+                <label>Họ và Tên</label>
+                <input type="text" id="r_name" required placeholder="Nhập họ tên đầy đủ...">
+            </div>
+            <div class="form-group">
+                <label>Số điện thoại</label>
+                <input type="text" id="r_phone" required placeholder="Nhập số điện thoại...">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="r_email" required placeholder="Nhập email...">
+            </div>
+            <div class="form-group">
+                <label>Mật khẩu</label>
+                <div class="pwd-container">
+                    <input type="password" id="r_pass" required placeholder="Tạo mật khẩu...">
+                    <button type="button" class="pwd-toggle" onclick="togglePwd('r_pass')">👁</button>
+                </div>
+            </div>
+            <div class="form-group address-group">
+                <label>Địa chỉ nhận hàng (API VN)</label>
+                <select id="province" required onchange="loadDistricts()">
+                    <option value="">Chọn Tỉnh/Thành</option>
+                </select>
+                <select id="district" required onchange="loadWards()">
+                    <option value="">Chọn Quận/Huyện</option>
+                </select>
+                <select id="ward" required>
+                    <option value="">Chọn Phường/Xã</option>
+                </select>
+                <input type="text" id="street" required placeholder="Số nhà, tên đường..." style="margin-top: 5px;">
+            </div>
+            <button type="submit" class="btn-submit">Đăng ký</button>
+        </form>
+        <div class="auth-links">Đã có tài khoản? <a href="/login.html">Đăng nhập ngay</a></div>
+        <a href="/" class="back-home">&larr; Quay lại trang chủ</a>
+    </div>
+
+    <script>
+        let vnData = [];
+
+        fetch('https://provinces.open-api.vn/api/?depth=3')
+            .then(res => res.json())
+            .then(data => {
+                vnData = data;
+                const provSelect = document.getElementById('province');
+                data.forEach(p => provSelect.add(new Option(p.name, p.code)));
+            });
+
+        function loadDistricts() {
+            const pCode = document.getElementById('province').value;
+            const dSelect = document.getElementById('district');
+            dSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+            document.getElementById('ward').innerHTML = '<option value="">Chọn Phường/Xã</option>';
+            if (pCode) {
+                const province = vnData.find(p => p.code == pCode);
+                province.districts.forEach(d => dSelect.add(new Option(d.name, d.code)));
+            }
+        }
+
+        function loadWards() {
+            const pCode = document.getElementById('province').value;
+            const dCode = document.getElementById('district').value;
+            const wSelect = document.getElementById('ward');
+            wSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+            if (dCode) {
+                const province = vnData.find(p => p.code == pCode);
+                const district = province.districts.find(d => d.code == dCode);
+                district.wards.forEach(w => wSelect.add(new Option(w.name, w.code)));
+            }
+        }
+
+        function togglePwd(id) {
+            const input = document.getElementById(id);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        document.getElementById('regForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fullName = document.getElementById('r_name').value;
+            const email = document.getElementById('r_email').value;
+            const phone = document.getElementById('r_phone').value;
+            const street = document.getElementById('street').value;
+            const ward = document.getElementById('ward').options[document.getElementById('ward').selectedIndex].text;
+            const district = document.getElementById('district').options[document.getElementById('district').selectedIndex].text;
+            const province = document.getElementById('province').options[document.getElementById('province').selectedIndex].text;
+            const password = document.getElementById('r_pass').value;
+            const address = street + ', ' + ward + ', ' + district + ', ' + province;
+
+            try {
+                const res = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fullName: fullName,
+                        email: email,
+                        phone: phone,
+                        address: address,
+                        password: password
+                    })
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    alert(err.error || 'Lỗi đăng ký: ' + res.status);
+                    return;
+                }
+
+                alert('Đăng ký thành công! Vui lòng đăng nhập.');
+                window.location.href = `/login.html?email=${encodeURIComponent(email)}`;
+            } catch (e) {
+                alert('Lỗi kết nối: ' + e.message);
+            }
+        });
+    </script>
+</body>
+
+</html>
