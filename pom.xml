@@ -51,6 +51,12 @@
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-rest</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>com.aayushatharva.brotli4j</groupId>
+          <artifactId>brotli4j</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- JSON -->
@@ -63,12 +69,6 @@
       <groupId>com.cloudinary</groupId>
       <artifactId>cloudinary-http5</artifactId>
       <version>2.6.0</version>
-      <exclusions>
-        <exclusion>
-            <groupId>com.aayushatharva.brotli4j</groupId>
-            <artifactId>brotli4j</artifactId>
-        </exclusion>
-    </exclusions>
     </dependency>
 
     <!-- Hibernate ORM -->
