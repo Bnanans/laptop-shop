@@ -4,7 +4,6 @@ import com.shop.entity.Customer;
 import com.shop.entity.Order;
 import com.shop.entity.OrderDetail;
 import com.shop.entity.Laptop;
-import jakarta.persistence.LockModeType;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -57,7 +56,7 @@ public class CheckoutResource {
 
         Map<Laptop, Integer> laptopsToOrder = new LinkedHashMap<>();
         for (Map.Entry<Long, Integer> entry : quantitiesByLaptop.entrySet()) {
-            Laptop laptop = Laptop.findById(entry.getKey(), LockModeType.PESSIMISTIC_WRITE);
+            Laptop laptop = Laptop.findById(entry.getKey());
             if (laptop == null) {
                 throw new NotFoundException("Không tìm thấy sản phẩm");
             }
@@ -66,6 +65,21 @@ public class CheckoutResource {
                         "Sản phẩm \"" + laptop.name + "\" chỉ còn " + Math.max(laptop.quantity, 0) + " sản phẩm");
             }
             laptopsToOrder.put(laptop, entry.getValue());
+        }
+
+        for (Map.Entry<Laptop, Integer> entry : laptopsToOrder.entrySet()) {
+            Laptop laptop = entry.getKey();
+            int quantity = entry.getValue();
+            int updated = Laptop.update(
+                    "quantity = quantity - ?1 where id = ?2 and quantity >= ?1",
+                    quantity, laptop.id);
+            if (updated == 0) {
+                Laptop current = Laptop.findById(laptop.id);
+                int available = current == null ? 0 : Math.max(current.quantity, 0);
+                throw new BadRequestException(
+                        "Sản phẩm \"" + laptop.name + "\" chỉ còn " + available + " sản phẩm");
+            }
+            laptop.quantity -= quantity;
         }
 
         Customer customer = Customer.find("email", request.customer.email).firstResult();
@@ -94,9 +108,7 @@ public class CheckoutResource {
             detail.quantity = quantity;
             detail.unitPrice = laptop.price;
             detail.persist();
-
             total += laptop.price * quantity;
-            laptop.quantity -= quantity;
         }
         order.totalAmount = total;
         return order;

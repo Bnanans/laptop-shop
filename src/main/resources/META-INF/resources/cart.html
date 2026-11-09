@@ -325,17 +325,28 @@
                 cart: selectedItems.map(i => ({ id: i.id, qty: i.qty }))
             };
 
-            const res = await fetch('/checkout', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
+            try {
+                const res = await fetch('/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
 
-            if (res.ok) {
+                if (!res.ok) {
+                    const responseText = await res.text();
+                    const message = responseText && !responseText.trimStart().startsWith('<')
+                        ? `\n${responseText.slice(0, 500)}`
+                        : '';
+                    alert(`Đặt hàng thất bại (HTTP ${res.status}).${message}`);
+                    return;
+                }
+
                 const remainingCart = cartItems.filter(i => !i.checked).map(i => ({ id: i.id, qty: i.qty }));
                 localStorage.setItem(cartKey, JSON.stringify(remainingCart));
                 location.href = '/checkout.html';
-            } else { alert("Lỗi hệ thống khi đặt hàng!"); }
+            } catch (error) {
+                alert(`Không thể kết nối đến máy chủ để đặt hàng: ${error.message}`);
+            }
         }
     </script>
 </body>
