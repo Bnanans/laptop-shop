@@ -129,7 +129,7 @@
         <form id="loginForm">
             <div class="form-group">
                 <label>Email / Tên đăng nhập</label>
-                <input type="text" id="l_email" required placeholder="Nhập email...">
+                <input type="text" id="l_email" required placeholder="Nhập email hoặc tên đăng nhập...">
             </div>
             <div class="form-group">
                 <label>Mật khẩu</label>
@@ -155,29 +155,54 @@
             const email = document.getElementById('l_email').value.trim();
             const password = document.getElementById('l_pass').value;
             try {
-                const res = await fetch('/customers/login', {
+                const adminRes = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: email, password: password })
+                });
+
+                if (adminRes.ok) {
+                    const admin = await adminRes.json();
+                    const user = {
+                        name: admin.fullName || admin.username,
+                        phone: '',
+                        email: admin.username,
+                        address: '',
+                        isAdmin: true
+                    };
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    window.location.href = '/admin/index.html';
+                    return;
+                }
+
+                if (adminRes.status !== 401) {
+                    throw new Error(`Lỗi xác thực admin (${adminRes.status})`);
+                }
+
+                const customerRes = await fetch('/customers/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: email, password: password })
                 });
-
-                if (!res.ok) {
-                    alert('Email hoặc mật khẩu không đúng');
-                    return;
+                if (!customerRes.ok) {
+                    if (customerRes.status === 401) {
+                        alert('Email/tên đăng nhập hoặc mật khẩu không đúng');
+                        return;
+                    }
+                    throw new Error(`Lỗi đăng nhập (${customerRes.status})`);
                 }
 
-                const customer = await res.json();
-                const user = {
+                const customer = await customerRes.json();
+                localStorage.setItem('currentUser', JSON.stringify({
                     name: customer.fullName,
                     phone: customer.phone,
                     email: customer.email,
                     address: customer.address,
                     isAdmin: false
-                };
-                localStorage.setItem('currentUser', JSON.stringify(user));
+                }));
                 window.location.href = '/';
             } catch (e) {
-                alert('Lỗi kết nối: ' + e.message);
+                alert('Không thể đăng nhập: ' + e.message);
             }
         });
     </script>

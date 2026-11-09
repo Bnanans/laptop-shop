@@ -26,14 +26,27 @@ public class AuthResource {
         public String password;
     }
 
+    public static class AdminLoginResponse {
+        public String username;
+        public String fullName;
+
+        public AdminLoginResponse(Admin admin) {
+            this.username = admin.username;
+            this.fullName = admin.fullName;
+        }
+    }
+
     @POST
     @Path("/login")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(Login login) {
+        if (login == null || login.username == null || login.password == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
         Admin a = adminService.findByUsername(login.username);
-        if (a != null && a.password.equals(login.password)) {
-            return Response.ok(a).build();
+        if (a != null && login.password.equals(a.password)) {
+            return Response.ok(new AdminLoginResponse(a)).build();
         }
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
