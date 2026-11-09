@@ -299,7 +299,17 @@
             localStorage.setItem(cartKey, JSON.stringify(cartItems.map(i => ({ id: i.id, qty: i.qty }))));
         }
 
-        function updateQty(index, change) { if (cartItems[index].qty + change > 0) { cartItems[index].qty += change; renderCart(); } }
+        function updateQty(index, change) {
+            const item = cartItems[index];
+            const newQty = item.qty + change;
+            if (newQty < 1) return;
+            if (newQty > item.quantity) {
+                alert(`Số lượng "${item.name}" vượt quá tồn kho. Hiện chỉ còn ${item.quantity} sản phẩm.`);
+                return;
+            }
+            item.qty = newQty;
+            renderCart();
+        }
         function toggleItem(index, el) { cartItems[index].checked = el.checked; renderCart(); }
         function toggleAll(el) { cartItems.forEach(i => i.checked = el.checked); renderCart(); }
 

@@ -5,6 +5,7 @@ import com.shop.repository.LaptopRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.BadRequestException;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class LaptopService {
 
     @Transactional
     public void add(Laptop laptop) {
+        validateQuantity(laptop);
         repository.persist(laptop);
     }
 
@@ -34,6 +36,7 @@ public class LaptopService {
 
     @Transactional
     public void update(Long id, Laptop newLaptop) {
+        validateQuantity(newLaptop);
 
         Laptop laptop = repository.findById(id);
 
@@ -44,6 +47,12 @@ public class LaptopService {
             laptop.quantity = newLaptop.quantity;
             laptop.description = newLaptop.description;
             laptop.imageUrl = newLaptop.imageUrl;
+        }
+    }
+
+    private void validateQuantity(Laptop laptop) {
+        if (laptop == null || laptop.quantity < 0) {
+            throw new BadRequestException("Số lượng tồn kho không được âm");
         }
     }
 
