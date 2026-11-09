@@ -45,12 +45,16 @@ public class UploadService {
             throw new IllegalArgumentException("File không được để trống");
         }
 
-        // Tạo tên duy nhất để tránh trùng ảnh
-        String publicId = UUID.randomUUID().toString();
+        // Cloudinary's Java uploader does not accept an InputStream as the file argument.
+        // Convert the bounded (max-body-size is 10 MB) upload to byte[] first.
+        byte[] fileBytes = data.readAllBytes();
+        if (fileBytes.length == 0) {
+            throw new IllegalArgumentException("File upload không được để trống");
+        }
 
-        // Upload ảnh lên Cloudinary
+        String publicId = UUID.randomUUID().toString();
         Map<?, ?> result = cloudinary.uploader().upload(
-                data,
+                fileBytes,
                 ObjectUtils.asMap(
                         "resource_type", "image",
                         "folder", "laptop-shop/products",
@@ -59,9 +63,7 @@ public class UploadService {
                 )
         );
 
-        // Lấy URL HTTPS của ảnh
         String imageUrl = (String) result.get("secure_url");
-
         if (imageUrl == null || imageUrl.isBlank()) {
             throw new IllegalStateException(
                     "Không lấy được URL ảnh từ Cloudinary"
