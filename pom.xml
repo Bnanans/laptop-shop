@@ -53,6 +53,12 @@
       <artifactId>quarkus-rest</artifactId>
     </dependency>
 
+    <!-- Multipart form support for image uploads -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-rest-multipart</artifactId>
+    </dependency>
+
     <!-- JSON -->
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -171,6 +177,7 @@
             <maven.home>${maven.home}</maven.home>
 
           </systemPropertyVariables>
+
         </configuration>
       </plugin>
 

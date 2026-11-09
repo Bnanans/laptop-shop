@@ -70,35 +70,51 @@ function checkEditMode() {
 async function saveLaptop() {
     const id = document.getElementById('laptop-id').value;
     let imageUrl = document.getElementById('existingImageUrl').value;
-
-    // Logic upload file ảnh nều người dùng có chọn file mới
     const fileInput = document.getElementById('imageFile');
-    if (fileInput.files.length > 0) {
-        const formData = new FormData();
-        formData.append('fileName', fileInput.files[0].name);
-        formData.append('file', fileInput.files[0]);
 
-        const uploadRes = await fetch('/api/upload', { method: 'POST', body: formData });
-        if (uploadRes.ok) {
-            imageUrl = await uploadRes.text();
-        } else {
-            alert("Lỗi upload ảnh!"); return;
+    try {
+        if (fileInput.files.length > 0) {
+            const formData = new FormData();
+            formData.append('fileName', fileInput.files[0].name);
+            formData.append('file', fileInput.files[0]);
+
+            // Do not set Content-Type manually; the browser adds the multipart boundary.
+            const uploadRes = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData
+            });
+            if (!uploadRes.ok) {
+                const errorText = await uploadRes.text();
+                console.error('Image upload failed:', uploadRes.status, errorText);
+                alert(`Lỗi upload ảnh (${uploadRes.status}): ${errorText || 'Vui lòng thử lại.'}`);
+                return;
+            }
+            imageUrl = (await uploadRes.text()).trim();
         }
+
+        const laptop = {
+            name: document.getElementById('name').value,
+            brand: document.getElementById('brand').value,
+            price: parseFloat(document.getElementById('price').value),
+            quantity: parseInt(document.getElementById('quantity').value),
+            description: document.getElementById('description').value,
+            imageUrl: imageUrl
+        };
+
+        const method = id ? 'PUT' : 'POST';
+        const url = id ? `${API_URL}/${id}` : API_URL;
+        const saveRes = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(laptop)
+        });
+        if (!saveRes.ok) {
+            const errorText = await saveRes.text();
+            throw new Error(`Lưu sản phẩm thất bại (${saveRes.status}): ${errorText}`);
+        }
+        window.location.href = 'index.html';
+    } catch (err) {
+        console.error("Error saving laptop:", err);
+        alert(`Không thể lưu sản phẩm: ${err.message || 'Lỗi kết nối máy chủ.'}`);
     }
-
-    const laptop = {
-        name: document.getElementById('name').value,
-        brand: document.getElementById('brand').value,
-        price: parseFloat(document.getElementById('price').value),
-        quantity: parseInt(document.getElementById('quantity').value),
-        description: document.getElementById('description').value,
-        imageUrl: imageUrl
-    };
-
-    const method = id ? 'PUT' : 'POST';
-    const url = id ? `${API_URL}/${id}` : API_URL;
-
-    fetch(url, { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(laptop) })
-        .then(() => { window.location.href = 'index.html'; })
-        .catch(err => console.error("Error saving:", err));
 }
